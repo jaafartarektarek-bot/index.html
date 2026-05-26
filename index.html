@@ -1,4 +1,191 @@
 <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CBRE Network Department Attendance</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Poppins',sans-serif;
+}
+
+body{
+  min-height:100vh;
+  background:linear-gradient(135deg,#0f172a,#111827,#2563eb);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:20px;
+}
+
+.container{
+  width:100%;
+  max-width:450px;
+  background:rgba(255,255,255,0.08);
+  backdrop-filter:blur(20px);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:30px;
+  padding:30px;
+  box-shadow:0 20px 45px rgba(0,0,0,0.35);
+}
+      .logo{
+  text-align:center;
+  margin-bottom:10px;
+}
+
+.logo h1{
+  color:white;
+  font-size:38px;
+  font-weight:700;
+}
+
+.logo p{
+  color:#cbd5e1;
+  font-size:14px;
+}
+
+.department{
+  text-align:center;
+  margin-bottom:30px;
+  color:#60a5fa;
+  font-weight:600;
+  letter-spacing:1px;
+}
+
+.form-group{
+  margin-bottom:18px;
+}
+
+label{
+  display:block;
+  margin-bottom:8px;
+  color:white;
+  font-size:14px;
+  font-weight:500;
+      }
+
+input,
+select{
+  width:100%;
+  padding:15px;
+  border:none;
+  border-radius:16px;
+  background:rgba(255,255,255,0.08);
+  color:white;
+  outline:none;
+  font-size:15px;
+  border:1px solid rgba(255,255,255,0.1);
+}
+
+input::placeholder{
+  color:#cbd5e1;
+}
+
+select option{
+  color:black;
+}
+
+.buttons{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+  margin-top:25px;
+}
+
+button{
+  border:none;
+  padding:16px;
+  border-radius:18px;
+  font-size:15px;
+  font-weight:700;
+  cursor:pointer;
+  transition:0.3s;
+}
+      button:hover{
+  background:linear-gradient(135deg,#22c55e,#16a34a);
+  color:white;
+  box-shadow:0 10px 25px rgba(34,197,94,0.3);
+}
+
+.clockout{
+  background:linear-gradient(135deg,#ef4444,#dc2626);
+  color:white;
+  box-shadow:0 10px 25px rgba(239,68,68,0.3);
+}
+
+.copybtn{
+  margin-top:15px;
+  width:100%;
+  background:linear-gradient(135deg,#8b5cf6,#6d28d9);
+  color:white;
+  box-shadow:0 10px 25px rgba(139,92,246,0.3);
+}
+
+.status{
+  margin-top:20px;
+  padding:15px;
+  border-radius:16px;
+  text-align:center;
+  color:white;
+  display:none;
+}
+
+.success{
+  background:rgba(34,197,94,0.2);
+}
+
+.error{
+  background:rgba(239,68,68,0.2);
+}
+
+.footer{
+  margin-top:20px;
+  text-align:center;
+  color:#cbd5e1;
+  font-size:12px;
+}
+      @media(max-width:500px){
+  }
+
+  .buttons{
+    grid-template-columns:1fr;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <div class="logo">
+    <h1>CBRE</h1>
+    <p>Attendance Management System</p>
+  </div>
+
+  <div class="department">
+    NETWORK DEPARTMENT
+  </div>
+
+  <div class="form-group">
+    <label>Employee Full Name</label>
+    <input type="text" id="employeeName" placeholder="Enter Full Name">
+  </div>
+
+  <div class="form-group">
+    <label>Employee ID</label>
+    <input type="text" id="employeeId" placeholder="Enter Employee ID">
+  </div>
+
+  <div class="form-group">
+    <label>Select Team Lead</label>
+    <select id="teamLead">
       <option value="">Choose Team Lead</option>
       <option value="Camila">Camila</option>
       <option value="Ramon">Ramon</option>
@@ -7,18 +194,13 @@
     </select>
   </div>
 
-  <div class="button-grid">
-    <button class="clockin" onclick="submitAttendance('Clock In')">
-      Clock In
-    </button>
+  <div class="buttons">
+        <button class="clockin" onclick="submitAttendance('Clock In')">
 
-    <button class="clockout" onclick="submitAttendance('Clock Out')">
-      Clock Out
-    </button>
   </div>
 
-  <button class="admin-btn">
-    Admin Dashboard
+  <button class="copybtn" onclick="copyEmployeeInfo()">
+    Copy Employee Information
   </button>
 
   <div id="status" class="status"></div>
@@ -31,48 +213,81 @@
 
 <script>
 
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyR6upD1LuPZus9jI9OGtPNEmvojjbPZGGcAEoQNdL_ZLCn8D4Y39j1khCEovSo_Ryq/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/library/d/1mW8a1Hi2X303WAne0SdQpORoC8ArdJoAXZzBlxfywnwqBvWgs7MeLXQY/1';
 
 async function submitAttendance(action){
 
-  const employeeName = document.getElementById('employeeName').value;
-  const employeeId = document.getElementById('employeeId').value;
+  const employeeName = document.getElementById('employeeName').value.trim();
+  const employeeId = document.getElementById('employeeId').value.trim();
   const teamLead = document.getElementById('teamLead').value;
 
   if(!employeeName || !employeeId || !teamLead){
-    showMessage('Please complete all fields','error');
+    showMessage('Please fill all fields','error');
     return;
   }
 
-  navigator.geolocation.getCurrentPosition(async(position)=>{
+  if(!navigator.geolocation){
+    showMessage('Geolocation not supported','error');
+    return;
+  }
 
-    const payload = {
-      employeeName,
-      employeeId,
-      teamLead,
-      action,
-      latitude:position.coords.latitude,
-      longitude:position.coords.longitude,
-      address:`${position.coords.latitude}, ${position.coords.longitude}`,
+  showMessage('Getting GPS Location...','success');
+
+  navigator.geolocation.getCurrentPosition(async(position)=>{
+        const payload = {
       device:navigator.userAgent
     };
 
     try{
 
-      const response = await fetch(SCRIPT_URL,{
+      await fetch(SCRIPT_URL,{
         method:'POST',
+        mode:'no-cors',
+        headers:{
+          'Content-Type':'application/json'
+        },
         body:JSON.stringify(payload)
       });
 
-      const result = await response.json();
+      showMessage(`${action} Successful`, 'success');
 
-      if(result.result === 'success'){
-        showMessage(`${action} Successful`,'success');
-      }else{
-        showMessage('Submission Failed','error');
-      }
+      document.getElementById('employeeName').value='';
+      document.getElementById('employeeId').value='';
+      document.getElementById('teamLead').value='';
 
     }catch(error){
-      showMessage('Connection Error','error');
+      showMessage('Connection Error', 'error');
     }
+
+  },()=>{
+    showMessage('Location Permission Denied','error');
+  });
+}
+
+function copyEmployeeInfo(){
+
+  const employeeName = document.getElementById('employeeName').value;
+  const employeeId = document.getElementById('employeeId').value;
+  const teamLead = document.getElementById('teamLead').value;
+
+  const text = `Employee: ${employeeName}
+ID: ${employeeId}
+Team Lead: ${teamLead}`;
+
+  navigator.clipboard.writeText(text);
+      showMessage('Employee Information Copied','success');
+}
+
+function showMessage(message,type){
+
+  const status = document.getElementById('status');
+
+  status.style.display='block';
+  status.className='status '+type;
+  status.innerHTML=message;
+}
+
+</script>
+
+</body>
 </html>
