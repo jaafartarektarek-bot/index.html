@@ -1,4 +1,28 @@
 <!DOCTYPE html>
+      <option value="">Choose Team Lead</option>
+      <option value="Camila">Camila</option>
+      <option value="Ramon">Ramon</option>
+      <option value="Brandon">Brandon</option>
+      <option value="Damien">Damien</option>
+    </select>
+  </div>
+
+  <div class="button-grid">
+    <button class="clockin" onclick="submitAttendance('Clock In')">
+      Clock In
+    </button>
+
+    <button class="clockout" onclick="submitAttendance('Clock Out')">
+      Clock Out
+    </button>
+  </div>
+
+  <button class="admin-btn">
+    Admin Dashboard
+  </button>
+
+  <div id="status" class="status"></div>
+
   <div class="footer">
     CBRE Network Department © 2026
   </div>
@@ -51,22 +75,4 @@ async function submitAttendance(action){
     }catch(error){
       showMessage('Connection Error','error');
     }
-
-  },()=>{
-    showMessage('Location Permission Denied','error');
-  });
-}
-
-function showMessage(message,type){
-
-  const status = document.getElementById('status');
-
-  status.style.display='block';
-  status.className='status '+type;
-  status.innerHTML=message;
-}
-
-</script>
-
-</body>
 </html>
